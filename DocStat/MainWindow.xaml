@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:DocStat"
         xmlns:Properties="clr-namespace:DocStat.Properties" x:Class="DocStat.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="777.8" Width="948.4" Closing="Window_Closing">
-    <Grid Margin="0,10,-4.6,-0.6">
+        Title="MainWindow" Height="632.8" Width="939.4" Closing="Window_Closing">
+    <Grid Margin="0,0,0,-1">
         <Button Content="Select" HorizontalAlignment="Left" Margin="59,16,0,0" VerticalAlignment="Top" Width="68" Height="30" Click="Button_Click" FontSize="14" RenderTransformOrigin="0.557,-1.154">
             <Button.RenderTransform>
                 <TransformGroup>
@@ -23,10 +23,15 @@
         <Button Content="Analyze" HorizontalAlignment="Left" Margin="411,17,0,0" VerticalAlignment="Top" Width="68" Click="Button_Click_1" Height="30" FontSize="14"/>
         <Label Content="Page number:" HorizontalAlignment="Left" Height="37" Margin="143,17,0,0" VerticalAlignment="Top" Width="107" FontSize="14"/>
         <TextBox x:Name="txtBoxNumber" HorizontalAlignment="Left" Height="23" Margin="255,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <DataGrid x:Name="dataGrid1" AutoGenerateColumns="False" ItemsSource="{Binding dict}"  HorizontalAlignment="Stretch" Margin="10,76,573.2,362" VerticalAlignment="Stretch">
+
+        <DataGrid x:Name="dataGrid1" AutoGenerateColumns="False" ItemsSource="{Binding dict}" Margin="815,366,29,100">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Key" Binding="{Binding Key}" />
                 <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
             </DataGrid.Columns>
         </DataGrid>
+        <Grid Name="grid" HorizontalAlignment="Left" Height="175" Margin="56,78,0,0" VerticalAlignment="Top" Width="423">
+        </Grid>
+        <Image Name="image"  HorizontalAlignment="Left" Height="293" Margin="56,253,0,0" VerticalAlignment="Top" Width="319"/>
     </Grid>
 </Window>

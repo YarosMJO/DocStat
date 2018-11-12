@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Task = System.Threading.Tasks.Task;
 
@@ -45,7 +48,7 @@ namespace DocStat
         private void OpenDoc(string path, int num)
         {
             application = new Application();
-            document = application.Documents.Open(path, ReadOnly: true);
+            document = application.Documents.Open(path, ReadOnly: false);
             pages = document.ActiveWindow.ActivePane.Pages;
 
             if (num > pages.Count || num <= 0)
@@ -103,6 +106,8 @@ namespace DocStat
                 tmp = text.Count(chr => chr == letters[i]);
                 dict.Add(letters[i], (tmp > 0) ? Math.Round(100.0 / (textLetterCount / tmp), 3) : 0);
             }
+            document.Close();
+            
             application.Quit();
         }
 
@@ -116,8 +121,19 @@ namespace DocStat
 
             await Task.Run(() => OpenDoc(Path ?? defPath, num));
 
-            dataGrid1.ItemsSource = dict;
+            var val = dict.Values.ToList();
 
+            grid.SetData(val);
+
+            List<double> x = new List<double>(), y = new List<double>();
+            for (int i = 0; i < val.Count; i++)
+            {
+                x.Add(i);
+                y.Add(val[i]);
+            }
+            image.DrawGraph(x, y);
+            //dataGrid1.ItemsSource = dict;
+            //dataGrid1.UpdateLayout();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
