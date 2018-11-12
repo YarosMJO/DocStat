@@ -70,6 +70,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FormulsRepository.cs" />
     <Compile Include="ImageExt.cs" />
     <Compile Include="GridExt.cs" />
     <Compile Include="MainWindow.xaml.cs">

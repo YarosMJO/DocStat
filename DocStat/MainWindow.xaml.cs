@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Application = Microsoft.Office.Interop.Word.Application;
 using Task = System.Threading.Tasks.Task;
 
@@ -29,10 +26,12 @@ namespace DocStat
         private string Path { get; set; }
 
         private OpenFileDialog OpenFileDialog;
+        private FormulsRepository Formuls;
 
         public MainWindow()
         {
             InitializeComponent();
+            Formuls = new FormulsRepository();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -107,7 +106,7 @@ namespace DocStat
                 dict.Add(letters[i], (tmp > 0) ? Math.Round(100.0 / (textLetterCount / tmp), 3) : 0);
             }
             document.Close();
-            
+
             application.Quit();
         }
 
@@ -122,7 +121,6 @@ namespace DocStat
             await Task.Run(() => OpenDoc(Path ?? defPath, num));
 
             var val = dict.Values.ToList();
-
             grid.SetData(val);
 
             List<double> x = new List<double>(), y = new List<double>();
@@ -132,8 +130,13 @@ namespace DocStat
                 y.Add(val[i]);
             }
             image.DrawGraph(x, y);
-            //dataGrid1.ItemsSource = dict;
-            //dataGrid1.UpdateLayout();
+
+            val.Sort();
+            grid2.SetData(val);
+
+            Formuls.initValues(val);
+            var h = Formuls.Sturges();
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
