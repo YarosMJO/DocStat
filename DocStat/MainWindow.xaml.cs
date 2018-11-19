@@ -129,14 +129,21 @@ namespace DocStat
                 x.Add(i);
                 y.Add(val[i]);
             }
-            image.DrawGraph(x, y);
+
+            image.DrawGistogram(y);
 
             val.Sort();
             grid2.SetData(val);
 
             Formuls.initValues(val);
             var h = Formuls.Sturges();
-
+            var x1 = Formuls.CalcX();
+            var Xi =Formuls.CalcXi(x1);
+            List<double> Axi = Formuls.CalcAXi();
+            List<int> Ni = Formuls.CalcNi();
+            var sumNi = Ni.Sum();
+            List<double> W = Formuls.CalcW();
+            List<double> W_h = Formuls.CalcW_h();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

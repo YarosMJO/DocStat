@@ -9,29 +9,16 @@
         Title="MainWindow" Height="1479.22" Width="925" Closing="Window_Closing">
     <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="1452" Width="915">
         <Grid.RowDefinitions>
-            <RowDefinition Height="0*"/>
-            <RowDefinition Height="0*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Button Content="Select" HorizontalAlignment="Left" Margin="59,8,0,0" VerticalAlignment="Top" Width="68" Height="30" Click="Button_Click" FontSize="14" RenderTransformOrigin="0.557,-1.154" Grid.Row="1" Grid.RowSpan="2">
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="0.405"/>
-                    <TranslateTransform X="0.352" Y="0.029"/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
+        <Button Content="Select" HorizontalAlignment="Left" Margin="59,8,0,0" VerticalAlignment="Top" Width="68" Height="30" Click="Button_Click" FontSize="14" Grid.Row="1" Grid.RowSpan="2"/>
         <Label Content="File:" HorizontalAlignment="Left" Height="30" Margin="7,4,0,0" VerticalAlignment="Top" Width="63" FontSize="18" Grid.Row="1" Grid.RowSpan="2"/>
         <TextBlock x:Name="txtBlockError" HorizontalAlignment="Left" Height="33" Margin="511,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="365" Grid.Row="1" Grid.RowSpan="2"/>
         <Button Content="Analyze" HorizontalAlignment="Left" Margin="411,9,0,0" VerticalAlignment="Top" Width="68" Click="Button_Click_1" Height="30" FontSize="14" Grid.Row="1" Grid.RowSpan="2"/>
         <Label Content="Page number:" HorizontalAlignment="Left" Height="37" Margin="143,9,0,0" VerticalAlignment="Top" Width="107" FontSize="14" Grid.Row="1" Grid.RowSpan="2"/>
         <TextBox x:Name="txtBoxNumber" HorizontalAlignment="Left" Height="23" Margin="255,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="1" Grid.RowSpan="2"/>
-        <Grid Name="grid" HorizontalAlignment="Left" Height="175" Margin="56,70,0,0" VerticalAlignment="Top" Width="423" Grid.Row="1" Grid.RowSpan="2">
-        </Grid>
+        <Grid Name="grid" HorizontalAlignment="Left" Height="175" Margin="56,70,0,0" VerticalAlignment="Top" Width="420" Grid.Row="1" Grid.RowSpan="2"/>
         <Image Name="image"  HorizontalAlignment="Left" Height="293" Margin="56,245,0,0" VerticalAlignment="Top" Width="319" Grid.Row="1" Grid.RowSpan="2"/>
-        <Image x:Name="image_Copy"  HorizontalAlignment="Left" Height="293" Margin="56,245,0,0" VerticalAlignment="Top" Width="319" Grid.Row="1" Grid.RowSpan="2"/>
-        <Grid x:Name="grid2" HorizontalAlignment="Left" Height="175" Margin="43,548,0,-185" VerticalAlignment="Top" Width="423" Grid.Row="1" Grid.RowSpan="2"/>
+        <Grid x:Name="grid2" HorizontalAlignment="Left" Height="175" Margin="43,548,0,-185" VerticalAlignment="Top" Width="420" Grid.Row="1" Grid.RowSpan="2"/>
     </Grid>
 </Window>
