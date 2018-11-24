@@ -29,17 +29,26 @@ namespace DocStat
 
         public void initValues(List<double> values)
         {
-            Values = values.Where(x => x > 0).ToList();
-            minX = Values.Min();
-            maxX = Values.Max();
-            n = Values.Count;
+            Values = values;
+            try
+            {
+                minX = Values.Min();
+                maxX = Values.Max();
+                n = Values.Count;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            
+            
         }
-        public int Sturges()
+        public int Calch()
         {
             try
             {
-                //h = (int)((maxX - minX) / (1 + (3.322 * Math.Log10(n))));
-                h = 3;
+                h = (int)((maxX - minX) / (1 + (3.322 * Math.Log10(n))));
+                //h = 3;
             }
             catch (Exception e)
             {
