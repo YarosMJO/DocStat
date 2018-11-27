@@ -161,6 +161,7 @@ namespace DocStat
             
             val.Sort();
 
+            //SecondTableGrid.SetData(new List<(string, List<double>)>() { (@"n_{i}", new List<double> { 0, 1, 2 ,3 }) });
             SecondTableGrid.SetData(val);
 
             FillThirdTable();
@@ -176,6 +177,30 @@ namespace DocStat
             var sumNi = Ni.Sum();
             List<double> W = Formuls.CalcW();
             List<double> W_h = Formuls.CalcW_h();
+
+            #region Grid
+
+            #region Formulas
+
+            var first = @"[X_{i};X_{i+1})";
+            var second = @"X_{i}=\frac{X_{i}+X_{i+1}}{2}";
+            var third = @"n_{i}";
+            var fourth = @"\omega_{i}=\frac{n_{i}}{n}";
+            var fifth = @"\frac{\omega_{i}}{h}";
+
+            #endregion
+
+            var thirdTableData = new List<(string, List<string>)>();
+
+            thirdTableData.Add((first, Axi.ToStringList()));
+            thirdTableData.Add((second, Xi.ToStringList()));
+            thirdTableData.Add((third, Ni.ToStringList()));
+            thirdTableData.Add((fourth, W.ToStringList()));
+            thirdTableData.Add((fifth, W_h.ToStringList()));
+
+            ThirdTableGrid.SetData(thirdTableData);
+
+            #endregion
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
