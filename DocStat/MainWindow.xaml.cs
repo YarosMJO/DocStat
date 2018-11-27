@@ -194,8 +194,18 @@ namespace DocStat
 
             var thirdTableData = new List<(string, List<string>)>();
 
-            thirdTableData.Add((first, Axi.ToStringList()));
-            thirdTableData.Add((second, Xi.ToStringList()));
+            #region Convert Xi to formatted
+
+            var firstList = new List<string>();
+            for(int i = 0; i < Xi.Count - 1; i++)
+            {
+                firstList.Add("[" + Xi[i] + "; " + Xi[i+1] + ")");
+            }
+
+            #endregion
+
+            thirdTableData.Add((first, firstList));
+            thirdTableData.Add((second, Axi.ToStringList()));
             thirdTableData.Add((third, Ni.ToStringList()));
             thirdTableData.Add((fourth, W.ToStringList()));
             thirdTableData.Add((fifth, W_h.ToStringList()));
@@ -207,10 +217,29 @@ namespace DocStat
 
         public void FillForthTable()
         {
-           var expValue = Formuls.CalcExceptedValue();
-           var disperssion = Formuls.CalcDisperssion();
-           var frequencyF = Formuls.CalcFrequencyF();
-           List<double> laplassList = Formuls.CalcListLaplass();
+            var expValue = Formuls.CalcExceptedValue();
+            var disperssion = Formuls.CalcDisperssion();
+            var frequencyF = Formuls.CalcFrequencyF();
+            List<double> Axi = Formuls.CalcAXi();
+            List<double> laplassList = Formuls.CalcListLaplass();
+
+            #region Grid
+
+            #region Formulas
+
+            var first = @"X_{i}";
+            var second = @"f(x)";
+
+            #endregion
+
+            var fourthTableData = new List<(string, List<string>)>();
+
+            fourthTableData.Add((first, Axi.ToStringList()));
+            fourthTableData.Add((second, laplassList.ToStringList()));
+
+            FourthTableGrid.SetData(fourthTableData);
+
+            #endregion
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
