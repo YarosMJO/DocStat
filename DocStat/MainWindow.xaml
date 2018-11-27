@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:DocStat"
         xmlns:Properties="clr-namespace:DocStat.Properties" x:Class="DocStat.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1479.22" Width="925" Closing="Window_Closing">
-    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="1452" Width="915">
+        Title="MainWindow" Height="1479.22" Width="1216" Closing="Window_Closing">
+    <Grid Margin="0,0,-8,15">
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -20,6 +20,6 @@
         <Grid Name="FirstTableGrid" HorizontalAlignment="Left" Height="175" Margin="56,70,0,0" VerticalAlignment="Top" Width="420" Grid.Row="1" Grid.RowSpan="2"/>
         <Image Name="image"  HorizontalAlignment="Left" Height="293" Margin="56,245,0,0" VerticalAlignment="Top" Width="319" Grid.Row="1" Grid.RowSpan="2"/>
         <Grid x:Name="SecondTableGrid" HorizontalAlignment="Left" Height="175" Margin="43,548,0,0" VerticalAlignment="Top" Width="433"/>
-        <Grid x:Name="ThirdTableGrid" HorizontalAlignment="Left" Height="175" Margin="443,308,0,0" VerticalAlignment="Top" Width="433"/>
+        <Grid x:Name="ThirdTableGrid" HorizontalAlignment="Left" Height="418" Margin="568,305,0,0" VerticalAlignment="Top" Width="454"/>
     </Grid>
 </Window>

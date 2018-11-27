@@ -166,6 +166,8 @@ namespace DocStat
 
             FillThirdTable();
 
+            FillForthTable();
+
         }
         public void FillThirdTable()
         {
@@ -202,10 +204,20 @@ namespace DocStat
 
             #endregion
         }
+
+        public void FillForthTable()
+        {
+           var expValue = Formuls.CalcExceptedValue();
+           var disperssion = Formuls.CalcDisperssion();
+           var frequencyF = Formuls.CalcFrequencyF();
+           List<double> laplassList = Formuls.CalcListLaplass();
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);
         }
+
         private void ShowMessage(string message = "", bool error = true)
         {
             if (message != null)

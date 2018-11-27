@@ -15,7 +15,10 @@ namespace DocStat
             Ni = new List<int>();
             W = new List<double>();
             W_h = new List<double>();
+            ListLaplass = new List<double>();
+            ListAxiF = new List<double>();
         }
+
         public double minX { get; set; } // min of frequencies 
         public double maxX { get; set; } // max of frequencies
         public int h { get; set; } // step
@@ -26,6 +29,13 @@ namespace DocStat
         public List<int> Ni { get; set; }// values count in every range
         public List<double> W { get; set; }
         public List<double> W_h { get; set; }
+
+        public double ExceptedValue { get; set; }
+        public double Disperssion { get; set; }
+        public double sigma { get; set; }
+        public double FrequencyF { get; set; }
+        public List<double> ListLaplass { get; set; }
+        public List<double> ListAxiF { get; set; }
 
         public void initValues(List<double> values)
         {
@@ -40,15 +50,14 @@ namespace DocStat
             {
                 throw;
             }
-            
-            
         }
+
+        #region First Second Third tables
         public int Calch()
         {
             try
             {
                 h = (int)((maxX - minX) / (1 + (3.322 * Math.Log10(n))));
-                //h = 3;
             }
             catch (Exception e)
             {
@@ -68,22 +77,23 @@ namespace DocStat
         public List<double> CalcXi(double Xn)
         {
             var tmp = Xn;
-            for (int i = 0; i < h+1; i++)
+            while (tmp < maxX)
             {
                 Xi.Add(tmp);
-                tmp += h;   
+                tmp += h;
             }
             return Xi;
         }
 
         public List<double> CalcAXi()
         {
-            for (int i = 0; i< Xi.Count-1; i++)
+            for (int i = 0; i < Xi.Count - 1; i++)
             {
-                AXi.Add((Xi[i] + Xi[i+1])/2);
+                AXi.Add((Xi[i] + Xi[i + 1]) / 2);
             }
             return AXi;
         }
+
         public List<int> CalcNi()
         {
             Values.Sort();// Here we sort, be careful
@@ -92,7 +102,7 @@ namespace DocStat
                 Ni.Add(0);
                 foreach (var v in Values)
                 {
-                    if (Xi[i] <=v && v <=Xi[i + 1] && v != 0)
+                    if (Xi[i] <= v && v <= Xi[i + 1] && v != 0)
                     {
                         Ni[i] += 1;
                     }
@@ -100,6 +110,7 @@ namespace DocStat
             }
             return Ni;
         }
+
         public List<double> CalcW()
         {
             foreach (var ni in Ni)
@@ -108,7 +119,8 @@ namespace DocStat
             }
             return W;
         }
-        public List<double > CalcW_h()
+
+        public List<double> CalcW_h()
         {
             foreach (var w in W)
             {
@@ -116,5 +128,65 @@ namespace DocStat
             }
             return W_h;
         }
+        #endregion
+
+        #region Forth table
+        public double CalcExceptedValue()
+        {
+            var sumList = AXi.Zip(Ni, (x, y) => x * y).Sum();
+            ExceptedValue = sumList / n;
+
+            return ExceptedValue;
+        }
+
+        public double CalcDisperssion()
+        {
+            var sumList = Xi.Sum(x => Math.Pow(x - ExceptedValue, 2));
+            Disperssion = sumList / (n - 1);
+            return Disperssion;
+        }
+
+        public double CalcFrequencyF()
+        {
+            var a = ExceptedValue;
+            sigma = Math.Sqrt(Disperssion);
+            //change x !!!!
+            var power = Math.Pow(Math.E, (-1 * Math.Pow(X1 - a, 2)) / (2 * Math.Pow(sigma, 2)));
+            var firstMultiplier = 1 / (sigma * Math.Sqrt(2 * Math.PI));
+            FrequencyF = firstMultiplier * power;
+            return FrequencyF;
+        }
+
+        public List<double> CalcListLaplass()
+        {
+            sigma = Math.Sqrt(Disperssion);
+            foreach (var item in AXi)
+            {
+                ListLaplass.Add(CalcLaplass(item));
+            }
+            return ListLaplass;
+        }
+
+        private double CalcLaplass(double aXi)
+        {
+            var ti = (aXi - ExceptedValue) / sigma;
+            var power = Math.Pow(Math.E, Math.Pow(ti, 2) / 2);
+            var firstMultiplier = 1 / Math.Sqrt(2 * Math.PI);
+            var laplasF = firstMultiplier * power;
+
+            return laplasF;
+        }
+
+        public List<double> CalcListAxiF()
+        {
+            sigma = Math.Sqrt(Disperssion);
+            foreach (var item in ListLaplass)
+            {
+                ListAxiF.Add(item / sigma);
+            }
+            return ListAxiF;
+        }
+
+        #endregion
     }
 }
