@@ -104,17 +104,23 @@ namespace DocStat
                 //formula
                 var parser = new TexFormulaParser();
                 var f = parser.Parse(formula);
-                var renderer = f.GetRenderer(TexStyle.Display, 20.0, "Arial");
+                var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
                 var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
 
                 var image = new Image();
-                image.Stretch = Stretch.None;
                 image.Source = bitmapSource;
 
                 Grid.SetColumn(image, i);
                 Grid.SetRow(image, 0);
                 grid.Children.Add(image);
+                
+                if (bitmapSource.Width < width && bitmapSource.Height < height)
+                    image.Stretch = Stretch.None;
+                else
+                    image.Stretch = Stretch.Uniform;
+
                 grid.InsertBorder(i, 0);
+
                 for (int j = 1; j < vertical; j++)
                 {
                     var label = new Label() { Content = data[i].values[j - 1], Width = width, Height = height, FontSize = fontSize };
@@ -125,6 +131,7 @@ namespace DocStat
                     grid.InsertBorder(i, j);
                 }
             }
+            grid.UpdateLayout();
         }
 
         public static void InsertBorder(this Grid grid, int i, int j)
