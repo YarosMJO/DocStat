@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace DocStat
@@ -17,6 +18,12 @@ namespace DocStat
             W_h = new List<double>();
             ListLaplass = new List<double>();
             ListAxiF = new List<double>();
+            ListPi = new List<double>();
+            LaplassTable = new Dictionary<double, double>();
+            N_piList = new List<double>();
+            Ni_N_PiList = new List<double>();
+            Ni_N_Pi_pow2List = new List<double>();
+            Ni_N_Pi_pow2_devide_N_PiList = new List<double>();
         }
 
         public double minX { get; set; } // min of frequencies 
@@ -37,16 +44,30 @@ namespace DocStat
         public List<double> ListLaplass { get; set; }
         public List<double> ListAxiF { get; set; }
 
+        public List<double> ListPi { get; set; }
+        public Dictionary<double, double> LaplassTable { get; set; }
+        public List<double> N_piList { get; set; }
+        public List<double> Ni_N_PiList { get; set; }
+        public List<double> Ni_N_Pi_pow2List { get; set; }
+        public List<double> Ni_N_Pi_pow2_devide_N_PiList { get; set; }
+        public double Rozrah { get; set; }
+
         public void initValues(List<double> values)
         {
             Values = values;
             try
             {
+                ExcelFetcher excelFetcher = new ExcelFetcher();
+                LaplassTable = excelFetcher.Fetch("C:/Users/ymykhailivskyi/Downloads/DocStat/DocStat/LaplassTable.xlsx");
                 minX = Values.Min();
                 maxX = Values.Max();
                 n = Values.Count;
             }
             catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (FileNotFoundException)
             {
                 throw;
             }
@@ -187,6 +208,69 @@ namespace DocStat
             return ListAxiF;
         }
 
+        #endregion
+
+        #region Fifth table
+        public List<double> CalcPiList()
+        {
+            var TableKeys = LaplassTable.Keys;
+            for (int i = 0; i < Xi.Count - 1; i++)
+            {
+                var firstArg = Math.Round(Math.Abs((Xi[i + 1] - ExceptedValue) / sigma), 2);
+                var secondArg = Math.Round(Math.Abs((Xi[i] - ExceptedValue) / sigma), 2);
+                if (TableKeys.Contains(firstArg) && TableKeys.Contains(secondArg))
+                {
+                    var firstValue = LaplassTable[firstArg];
+                    var secondValue = LaplassTable[secondArg];
+                    ListPi.Add(firstArg - secondArg);
+                }   
+            }
+
+            return ListPi;
+        }
+
+        public List<double> CalcN_PiList()
+        {
+            foreach (var item in ListPi)
+            {
+                N_piList.Add(item * n);
+            }
+            return N_piList;
+        }
+
+        public List<double> CalcNi_N_PiList()
+        {
+            for(int i =0; i<Ni.Count;i++)
+            {
+                Ni_N_PiList.Add(Ni[i] - N_piList[i]);
+            }
+            return Ni_N_PiList;
+        }
+
+        public List<double> CalcNi_N_Pi_pow2List()
+        {
+            foreach(var item in Ni_N_PiList)
+            {
+                Ni_N_Pi_pow2List.Add(Math.Pow(item, 2));
+            }
+            return Ni_N_Pi_pow2List;
+        }
+
+
+        public List<double> CalcNi_N_Pi_pow2_devide_N_PiList()
+        {
+            for (int i = 0;i< Ni_N_Pi_pow2List.Count;i++)
+            {
+                Ni_N_Pi_pow2_devide_N_PiList.Add(Ni_N_Pi_pow2List[i]/ Ni_N_PiList[i]);
+            }
+            return Ni_N_Pi_pow2_devide_N_PiList;
+        }
+
+        public double CalcRozrah()
+        {
+            Rozrah = Ni_N_Pi_pow2_devide_N_PiList.Sum();
+            return Rozrah;
+        }
         #endregion
     }
 }
