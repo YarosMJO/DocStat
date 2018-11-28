@@ -138,12 +138,12 @@ namespace DocStat
             {
                 await Task.Run(() => OpenDoc(Path ?? defPath, num));
                 val = dict.Values.ToList();
-                val = val.Where(item => item > 0).ToList();
                 Formuls.initValues(val);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ShowMessage("Internal error. Bad input data");
+                ShowMessage(ex.Message);
                 return;
             }
 
@@ -167,6 +167,8 @@ namespace DocStat
             FillThirdTable();
 
             FillForthTable();
+
+            FillFifthTable();
 
         }
         public void FillThirdTable()
@@ -240,6 +242,16 @@ namespace DocStat
             FourthTableGrid.SetData(fourthTableData);
 
             #endregion
+        }
+
+        public void FillFifthTable()
+        {
+            var PisList = Formuls.CalcPiList();
+            var N_PiList = Formuls.CalcN_PiList();
+            var Ni_N_PiList = Formuls.CalcNi_N_PiList();
+            var Ni_N_Pi_pow2List = Formuls.CalcNi_N_Pi_pow2List();
+            var Ni_N_Pi_pow2_devide_N_PiList = Formuls.CalcNi_N_Pi_pow2_devide_N_PiList();
+            var Rozrah = Formuls.CalcRozrah();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
