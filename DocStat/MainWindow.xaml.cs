@@ -11,6 +11,7 @@ namespace DocStat
 {
     public partial class MainWindow : System.Windows.Window
     {
+        #region variables
         private Application application;
         private Document document;
         private Pages pages;
@@ -22,12 +23,13 @@ namespace DocStat
         private Dictionary<char, double> dict;
         private static readonly List<char> letters = "abcdefghijklmnopqrstuvwxyz0123456789бвгґдєжзиїйклмнптфхцчшщьюя".ToList();
         private double targetCharCount = letters.Count;
-        private const string defPath = @"C:\Users\myhaj\source\repos\DocStat\DocStat\example.docx";
         private string Path { get; set; }
 
         private OpenFileDialog OpenFileDialog;
         private FormulsRepository Formuls;
 
+        #endregion
+ 
         public MainWindow()
         {
             InitializeComponent();
@@ -136,9 +138,16 @@ namespace DocStat
             List<double> val = new List<double>();
             try
             {
-                await Task.Run(() => OpenDoc(Path ?? defPath, num));
-                val = dict.Values.ToList();
-                Formuls.initValues(val);
+                await Task.Run(() => OpenDoc(Path, num));
+
+                if (dict != null)
+                {
+                    val = dict.Values.ToList();
+                    val = val.FindAll(item => item > 0);
+                    Formuls.initValues(val);
+                }
+                else return;
+                
             }
             catch (Exception ex)
             {
@@ -149,7 +158,8 @@ namespace DocStat
 
             FirstTableGrid.SetData(val);
 
-            List<double> x = new List<double>(), y = new List<double>();
+            var x = new List<double>();
+            var y = new List<double>();
             for (int i = 0; i < val.Count; i++)
             {
                 x.Add(i);
@@ -158,10 +168,7 @@ namespace DocStat
 
             image.DrawGistogram(y);
 
-            
             val.Sort();
-
-            //SecondTableGrid.SetData(new List<(string, List<double>)>() { (@"n_{i}", new List<double> { 0, 1, 2 ,3 }) });
             SecondTableGrid.SetData(val);
 
             FillThirdTable();
@@ -171,6 +178,7 @@ namespace DocStat
             FillFifthTable();
 
         }
+
         public void FillThirdTable()
         {
             var h = Formuls.Calch();
@@ -199,9 +207,9 @@ namespace DocStat
             #region Convert Xi to formatted
 
             var firstList = new List<string>();
-            for(int i = 0; i < Xi.Count - 1; i++)
+            for (int i = 0; i < Xi.Count - 1; i++)
             {
-                firstList.Add("[" + Xi[i] + "; " + Xi[i+1] + ")");
+                firstList.Add("[" + Xi[i] + "; " + Xi[i + 1] + ")");
             }
 
             #endregion
@@ -234,10 +242,11 @@ namespace DocStat
 
             #endregion
 
-            var fourthTableData = new List<(string, List<string>)>();
-
-            fourthTableData.Add((first, Axi.ToStringList()));
-            fourthTableData.Add((second, laplassList.ToStringList()));
+            var fourthTableData = new List<(string, List<string>)>
+            {
+                (first, Axi.ToStringList()),
+                (second, laplassList.ToStringList())
+            };
 
             FourthTableGrid.SetData(fourthTableData);
 
@@ -252,6 +261,31 @@ namespace DocStat
             var Ni_N_Pi_pow2List = Formuls.CalcNi_N_Pi_pow2List();
             var Ni_N_Pi_pow2_devide_N_PiList = Formuls.CalcNi_N_Pi_pow2_devide_N_PiList();
             var Rozrah = Formuls.CalcRozrah();
+
+            #region Grid
+
+            #region Formulas
+
+            var third = @"p_{i}";
+            var fourth = @"n*p_{i}";
+            var fifth = @"(n_{i}-n*p_{i})";
+            var sixth = @"(n_{i}-n*p_{i})^2";
+            var seventh = @"\frac{(n_{i}-n*p_{i})^2}{n*p_{i}}";
+
+            #endregion
+
+            var fifthTableData = new List<(string, List<string>)>
+            {
+                (third, PisList.ToStringList()),
+                (fourth, N_PiList.ToStringList()),
+                (fifth, Ni_N_PiList.ToStringList()),
+                (sixth, Ni_N_Pi_pow2List.ToStringList()),
+                (seventh, Ni_N_Pi_pow2_devide_N_PiList.ToStringList())
+            };
+
+            FifthTableGrid.SetData(fifthTableData, true);
+
+            #endregion
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -279,8 +313,17 @@ namespace DocStat
                     SecondTableGrid.RowDefinitions.Clear();
                     SecondTableGrid.ColumnDefinitions.Clear();
 
-                    //Todo third table
+                    ThirdTableGrid.Children.Clear();
+                    ThirdTableGrid.RowDefinitions.Clear();
+                    ThirdTableGrid.ColumnDefinitions.Clear();
 
+                    FourthTableGrid.Children.Clear();
+                    FourthTableGrid.RowDefinitions.Clear();
+                    FourthTableGrid.ColumnDefinitions.Clear();
+
+                    FifthTableGrid.Children.Clear();
+                    FifthTableGrid.RowDefinitions.Clear();
+                    FifthTableGrid.ColumnDefinitions.Clear();
                 }));
             }
         }

@@ -54,11 +54,11 @@ namespace DocStat
 
         public void initValues(List<double> values)
         {
-            Values = values;
             try
             {
                 ExcelFetcher excelFetcher = new ExcelFetcher();
-                LaplassTable = excelFetcher.Fetch("C:/Users/ymykhailivskyi/Downloads/DocStat/DocStat/LaplassTable.xlsx");
+                LaplassTable = excelFetcher.Fetch();
+                Values = values;
                 minX = Values.Min();
                 maxX = Values.Max();
                 n = Values.Count;
@@ -97,8 +97,9 @@ namespace DocStat
 
         public List<double> CalcXi(double Xn)
         {
+            Xi.Clear();
             var tmp = Xn;
-            while (tmp < maxX)
+            while (tmp < maxX+1)
             {
                 Xi.Add(tmp);
                 tmp += h;
@@ -108,6 +109,7 @@ namespace DocStat
 
         public List<double> CalcAXi()
         {
+            AXi.Clear();
             for (int i = 0; i < Xi.Count - 1; i++)
             {
                 AXi.Add((Xi[i] + Xi[i + 1]) / 2);
@@ -117,6 +119,7 @@ namespace DocStat
 
         public List<int> CalcNi()
         {
+            Ni.Clear();
             Values.Sort();// Here we sort, be careful
             for (int i = 0; i < Xi.Count - 1; i++)
             {
@@ -134,6 +137,7 @@ namespace DocStat
 
         public List<double> CalcW()
         {
+            W.Clear();
             foreach (var ni in Ni)
             {
                 W.Add(ni / n);
@@ -143,6 +147,7 @@ namespace DocStat
 
         public List<double> CalcW_h()
         {
+            W_h.Clear();
             foreach (var w in W)
             {
                 W_h.Add(w / h);
@@ -180,6 +185,7 @@ namespace DocStat
 
         public List<double> CalcListLaplass()
         {
+            ListLaplass.Clear();
             sigma = Math.Sqrt(Disperssion);
             foreach (var item in AXi)
             {
@@ -200,6 +206,7 @@ namespace DocStat
 
         public List<double> CalcListAxiF()
         {
+            ListAxiF.Clear();
             sigma = Math.Sqrt(Disperssion);
             foreach (var item in ListLaplass)
             {
@@ -213,6 +220,7 @@ namespace DocStat
         #region Fifth table
         public List<double> CalcPiList()
         {
+            ListPi.Clear();
             var TableKeys = LaplassTable.Keys;
             for (int i = 0; i < Xi.Count - 1; i++)
             {
@@ -223,7 +231,7 @@ namespace DocStat
                     var firstValue = LaplassTable[firstArg];
                     var secondValue = LaplassTable[secondArg];
                     ListPi.Add(firstArg - secondArg);
-                }   
+                }
             }
 
             return ListPi;
@@ -231,6 +239,7 @@ namespace DocStat
 
         public List<double> CalcN_PiList()
         {
+            N_piList.Clear();
             foreach (var item in ListPi)
             {
                 N_piList.Add(item * n);
@@ -240,7 +249,8 @@ namespace DocStat
 
         public List<double> CalcNi_N_PiList()
         {
-            for(int i =0; i<Ni.Count;i++)
+            Ni_N_PiList.Clear();
+            for (int i = 0; i < Ni.Count; i++)
             {
                 Ni_N_PiList.Add(Ni[i] - N_piList[i]);
             }
@@ -249,19 +259,20 @@ namespace DocStat
 
         public List<double> CalcNi_N_Pi_pow2List()
         {
-            foreach(var item in Ni_N_PiList)
+            Ni_N_Pi_pow2List.Clear();
+            foreach (var item in Ni_N_PiList)
             {
                 Ni_N_Pi_pow2List.Add(Math.Pow(item, 2));
             }
             return Ni_N_Pi_pow2List;
         }
 
-
         public List<double> CalcNi_N_Pi_pow2_devide_N_PiList()
         {
-            for (int i = 0;i< Ni_N_Pi_pow2List.Count;i++)
+            Ni_N_Pi_pow2_devide_N_PiList.Clear();
+            for (int i = 0; i < Ni_N_Pi_pow2List.Count; i++)
             {
-                Ni_N_Pi_pow2_devide_N_PiList.Add(Ni_N_Pi_pow2List[i]/ Ni_N_PiList[i]);
+                Ni_N_Pi_pow2_devide_N_PiList.Add(Ni_N_Pi_pow2List[i] / Ni_N_PiList[i]);
             }
             return Ni_N_Pi_pow2_devide_N_PiList;
         }
