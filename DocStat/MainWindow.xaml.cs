@@ -222,6 +222,8 @@ namespace DocStat
 
             ThirdTableGrid.SetData(thirdTableData);
 
+            ThirdTableGrid.InsertSumRow(Axi, Ni.ToDoubleList(), W, W_h);
+
             #endregion
         }
 

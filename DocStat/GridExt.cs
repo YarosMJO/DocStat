@@ -83,23 +83,25 @@ namespace DocStat
 
             if (turn)
             {
-                horizontal = data[0].values.Count + 1;
+                horizontal = data[0].values.Count;
                 foreach (var l in data)
                 {
                     if (l.values.Count < horizontal)
                         horizontal = l.values.Count;
                 }
+                ++horizontal;
                 vertical = data.Count;
             }
             else
             {
                 horizontal = data.Count;
-                vertical = data[0].values.Count + 1;
+                vertical = data[0].values.Count;
                 foreach (var l in data)
                 {
                     if (l.values.Count < vertical)
                         vertical = l.values.Count;
                 }
+                ++vertical;
             }
 
             int width = (int)(grid.Width / horizontal);
@@ -201,6 +203,74 @@ namespace DocStat
             }
 
             grid.UpdateLayout();
+        }
+
+        public static void InsertSumRow(this Grid grid, params List<double>[] data)
+        {
+            int j = grid.RowDefinitions.Count;
+
+            int horizontal = data.Length + 1;
+            int vertical = j + 1;
+            int width = (int)(grid.Width / horizontal);
+            int height = (int)(grid.Height / vertical);
+            int fontSize = 12;
+
+            #region Cells
+
+            for (int i = 0; i < horizontal; i++)
+            {
+                var c = new ColumnDefinition
+                {
+                    Width = new GridLength(width)
+                };
+                grid.ColumnDefinitions.Add(c);
+            }
+            foreach(var rd in grid.RowDefinitions)
+            {
+                rd.Height = new GridLength(height);
+            }
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(height) });
+
+            #endregion
+
+            #region Formula
+
+            //formula
+            var parser = new TexFormulaParser();
+            var f = parser.Parse(@"\sum");
+            var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
+            var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
+
+            var image = new Image();
+            image.Source = bitmapSource;
+
+            Grid.SetColumn(image, 0);
+            Grid.SetRow(image, j);
+            grid.Children.Add(image);
+
+            if (bitmapSource.Width < width && bitmapSource.Height < height)
+                image.Stretch = Stretch.None;
+            else
+                image.Stretch = Stretch.Uniform;
+
+            grid.InsertBorder(0, j);
+
+            #endregion
+
+            for(int i = 0; i < horizontal - 1; i++)
+            {
+                var l = data[i];
+                var sum = 0.0;
+                foreach (var d in l)
+                    sum += d;
+
+                var label = new Label() { Content = sum, Width = width, Height = height, FontSize = fontSize };
+                label.HorizontalContentAlignment = HorizontalAlignment.Center;
+                Grid.SetColumn(label, i + 1);
+                Grid.SetRow(label, j);
+                grid.Children.Add(label);
+                grid.InsertBorder(i + 1, j);
+            }
         }
 
         public static void InsertBorder(this Grid grid, int i, int j)
