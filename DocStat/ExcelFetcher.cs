@@ -14,6 +14,7 @@ namespace DocStat
         {
             var xlsApp = new Application();
             var wb = xlsApp.Workbooks.Open(Directory.GetCurrentDirectory() + excelPath);
+            
             var sheets = wb.Worksheets;
             var ws = (Worksheet)sheets.get_Item(1);
 
@@ -22,6 +23,10 @@ namespace DocStat
 
             Range secondCol = ws.UsedRange.Columns[2];
             Array values = secondCol.Value2 as Array;
+
+            //release excel process
+            wb.Close(true);
+            xlsApp.Quit();
 
             IFormatProvider formatter = new NumberFormatInfo { NumberDecimalSeparator = "," };
             var stringKeys = new List<string>();
@@ -42,6 +47,7 @@ namespace DocStat
               .ToDictionary(x => x.k, x => x.v);
 
             return dic;
+
         }
     }
 }

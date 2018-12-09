@@ -28,8 +28,12 @@ namespace DocStat
         private OpenFileDialog OpenFileDialog;
         private FormulsRepository Formuls;
 
+        private const string BaseText = "The hypothesis about the normal distribution of the general population, from which the formed sample";
+        private const string SuccessText = BaseText + " does not contradict the experimental data";
+        private const string FailText = BaseText + " contradict the experimental data";
+
         #endregion
- 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -136,6 +140,7 @@ namespace DocStat
                 return;
             }
             List<double> val = new List<double>();
+           
             try
             {
                 await Task.Run(() => OpenDoc(Path, num));
@@ -146,8 +151,11 @@ namespace DocStat
                     val = val.FindAll(item => item > 0);
                     Formuls.initValues(val);
                 }
-                else return;
-                
+                else
+                {
+                    return;
+                }
+
             }
             catch (Exception ex)
             {
@@ -176,6 +184,8 @@ namespace DocStat
             FillForthTable();
 
             FillFifthTable();
+
+            FinalCalculations();
 
         }
 
@@ -234,6 +244,7 @@ namespace DocStat
             var frequencyF = Formuls.CalcFrequencyF();
             List<double> Axi = Formuls.CalcAXi();
             List<double> laplassList = Formuls.CalcListLaplass();
+            List<double> FlaplassList = Formuls.CalcListAxiF();
 
             #region Grid
 
@@ -247,7 +258,7 @@ namespace DocStat
             var fourthTableData = new List<(string, List<string>)>
             {
                 (first, Axi.ToStringList()),
-                (second, laplassList.ToStringList())
+                (second, FlaplassList.ToStringList())
             };
 
             FourthTableGrid.SetData(fourthTableData);
@@ -258,11 +269,11 @@ namespace DocStat
         public void FillFifthTable()
         {
             var PisList = Formuls.CalcPiList();
+            var RightRangeNi = Formuls.CalcRightRangeNiList();
             var N_PiList = Formuls.CalcN_PiList();
             var Ni_N_PiList = Formuls.CalcNi_N_PiList();
             var Ni_N_Pi_pow2List = Formuls.CalcNi_N_Pi_pow2List();
             var Ni_N_Pi_pow2_devide_N_PiList = Formuls.CalcNi_N_Pi_pow2_devide_N_PiList();
-            var Rozrah = Formuls.CalcRozrah();
 
             #region Grid
 
@@ -288,6 +299,14 @@ namespace DocStat
             FifthTableGrid.SetData(fifthTableData, true);
 
             #endregion
+        }
+
+        public void FinalCalculations()
+        {
+            var Rozrah = Formuls.CalcRozrah();
+            var R = Formuls.R;
+            var Xit = Formuls.Xit;
+            var rezult = Formuls.VerifyDistribution();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
