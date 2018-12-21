@@ -304,9 +304,11 @@ namespace DocStat
         public void FinalCalculations()
         {
             var Rozrah = Formuls.CalcRozrah();
-            var R = Formuls.R;
-            var Xit = Formuls.Xit;
+            var R = Formuls.CalcR();
+            var Xit = Formuls.CalcXit();
             var rezult = Formuls.VerifyDistribution();
+
+            ResultGrid.MakeResult(Xit, Rozrah, rezult, R, SuccessText, FailText);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -345,6 +347,10 @@ namespace DocStat
                     FifthTableGrid.Children.Clear();
                     FifthTableGrid.RowDefinitions.Clear();
                     FifthTableGrid.ColumnDefinitions.Clear();
+
+                    ResultGrid.Children.Clear();
+                    ResultGrid.RowDefinitions.Clear();
+                    ResultGrid.ColumnDefinitions.Clear();
                 }));
             }
         }

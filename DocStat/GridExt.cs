@@ -151,9 +151,8 @@ namespace DocStat
                         image.Stretch = Stretch.None;
                     else
                         image.Stretch = Stretch.Uniform;
-
                     grid.InsertBorder(0, j);
-
+                    grid.InsertBorder(0, j);
                     for (int i = 1; i < horizontal; i++)
                     {
                         var label = new Label() { Content = data[j].values[i - 1], Width = width, Height = height, FontSize = fontSize };
@@ -203,6 +202,130 @@ namespace DocStat
             }
 
             grid.UpdateLayout();
+        }
+
+        public static void InsertSumRow(this Grid grid, params List<double>[] data)
+        {
+            int j = grid.RowDefinitions.Count;
+
+            int horizontal = data.Length + 1;
+            int vertical = j + 1;
+            int width = (int)(grid.Width / horizontal);
+            int height = (int)(grid.Height / vertical);
+            int fontSize = 12;
+
+            #region Cells
+
+            for (int i = 0; i < horizontal; i++)
+            {
+                var c = new ColumnDefinition
+                {
+                    Width = new GridLength(width)
+                };
+                grid.ColumnDefinitions.Add(c);
+            }
+            foreach(var rd in grid.RowDefinitions)
+            {
+                rd.Height = new GridLength(height);
+            }
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(height) });
+
+            #endregion
+
+            #region Formula
+
+            //formula
+            var parser = new TexFormulaParser();
+            var f = parser.Parse(@"\sum");
+            var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
+            var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
+
+            var image = new Image();
+            image.Source = bitmapSource;
+
+            Grid.SetColumn(image, 0);
+            Grid.SetRow(image, j);
+            grid.Children.Add(image);
+
+            if (bitmapSource.Width < width && bitmapSource.Height < height)
+                image.Stretch = Stretch.None;
+            else
+                image.Stretch = Stretch.Uniform;
+
+            grid.InsertBorder(0, j);
+
+            #endregion
+
+            for(int i = 0; i < horizontal - 1; i++)
+            {
+                var l = data[i];
+                var sum = 0.0;
+                foreach (var d in l)
+                    sum += d;
+
+                var label = new Label() { Content = sum, Width = width, Height = height, FontSize = fontSize };
+                label.HorizontalContentAlignment = HorizontalAlignment.Center;
+                Grid.SetColumn(label, i + 1);
+                Grid.SetRow(label, j);
+                grid.Children.Add(label);
+                grid.InsertBorder(i + 1, j);
+            }
+        }
+
+        public static void MakeResult(this Grid grid, double xit, double xrozrah, bool result, int r, string sucT, string faiT)
+        {
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) });
+            for (int i = 1; i < 5; i++)
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(30) });
+
+            var first = FormulaToImage(@"\chi^2=\sum_{i=1}^k\frac{(n_i-n*p_i)^2}{n*p_i}");
+            first.Stretch = Stretch.None;
+            Grid.SetColumn(first, 0);
+            Grid.SetRow(first, 0);
+            grid.Children.Add(first);
+
+            var second = FormulaToImage(@"\chi^2 = " + xrozrah);
+            second.Stretch = Stretch.None;
+            Grid.SetColumn(second, 0);
+            Grid.SetRow(second, 1);
+            grid.Children.Add(second);
+
+            var third = FormulaToImage(@"r = " + r);
+            third.Stretch = Stretch.None;
+            Grid.SetColumn(third, 0);
+            Grid.SetRow(third, 2);
+            grid.Children.Add(third);
+
+            var fourth = FormulaToImage(@"\chi_{t}^2 = " + xit + @" => \chi ^ 2 " + (result ? "<" : ">") + @" \chi_{t}^2");
+            fourth.Stretch = Stretch.None;
+            Grid.SetColumn(fourth, 0);
+            Grid.SetRow(fourth, 3);
+            grid.Children.Add(fourth);
+
+            var label = new Label
+            {
+                Content = result ? sucT : faiT
+            };
+            Grid.SetColumn(label, 0);
+            Grid.SetRow(label, 4);
+            grid.Children.Add(label);
+
+            grid.UpdateLayout();
+        }
+
+        private static Image FormulaToImage(string formula)
+        {
+            var parser = new TexFormulaParser();
+            var f = parser.Parse(formula);
+            var renderer = f.GetRenderer(TexStyle.Display, 14.0, "Arial");
+            var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
+
+            var image = new Image
+            {
+                Source = bitmapSource
+            };
+
+            return image;
         }
 
         public static void InsertBorder(this Grid grid, int i, int j)
