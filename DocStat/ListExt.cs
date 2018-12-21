@@ -17,5 +17,15 @@ namespace DocStat
             }
             return result;
         }
+
+        public static List<double> ToDoubleList(this List<int> list)
+        {
+            var result = new List<double>();
+            foreach (var i in list)
+            {
+                result.Add(i);
+            }
+            return result;
+        }
     }
 }

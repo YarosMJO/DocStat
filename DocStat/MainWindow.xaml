@@ -19,7 +19,7 @@
         <TextBox x:Name="txtBoxNumber" HorizontalAlignment="Left" Height="23" Margin="255,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="1" Grid.RowSpan="2"/>
 
 
-        <ScrollViewer Height="670" VerticalAlignment="Top" Width="Auto" Margin="0,44,0,0">
+        <ScrollViewer Height="708" VerticalAlignment="Top" Width="Auto" Margin="0,44,0.2,0">
             <Grid Height="Auto" Width="Auto">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
