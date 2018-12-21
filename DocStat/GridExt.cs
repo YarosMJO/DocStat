@@ -14,6 +14,10 @@ namespace DocStat
     {
         public static void SetData(this Grid grid, List<double> data)
         {
+            grid.Children.Clear();
+            grid.ColumnDefinitions.Clear();
+            grid.RowDefinitions.Clear();
+
             int width = 40;
             int height = 40;
             int fontSize = 12;
@@ -66,13 +70,40 @@ namespace DocStat
             grid.UpdateLayout();
         }
 
-        public static void SetData(this Grid grid, List<(string formula, List<string> values)> data)
+        public static void SetData(this Grid grid, List<(string formula, List<string> values)> data, bool turn = false)
         {
             if (data == null || data.Count == 0)
                 throw new Exception("data can't be null");
 
-            int horizontal = data.Count;
-            int vertical = data[0].values.Count + 1;
+            grid.Children.Clear();
+            grid.ColumnDefinitions.Clear();
+            grid.RowDefinitions.Clear();
+
+            int horizontal, vertical;
+
+            if (turn)
+            {
+                horizontal = data[0].values.Count;
+                foreach (var l in data)
+                {
+                    if (l.values.Count < horizontal)
+                        horizontal = l.values.Count;
+                }
+                ++horizontal;
+                vertical = data.Count;
+            }
+            else
+            {
+                horizontal = data.Count;
+                vertical = data[0].values.Count;
+                foreach (var l in data)
+                {
+                    if (l.values.Count < vertical)
+                        vertical = l.values.Count;
+                }
+                ++vertical;
+            }
+
             int width = (int)(grid.Width / horizontal);
             int height = (int)(grid.Height / vertical);
             int fontSize = 12;
@@ -97,40 +128,80 @@ namespace DocStat
             }
 
             #endregion
-
-            for(int i = 0; i < horizontal; i++)
+            
+            if (turn)
             {
-                var (formula, values) = data[i];
-                //formula
-                var parser = new TexFormulaParser();
-                var f = parser.Parse(formula);
-                var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
-                var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
-
-                var image = new Image();
-                image.Source = bitmapSource;
-
-                Grid.SetColumn(image, i);
-                Grid.SetRow(image, 0);
-                grid.Children.Add(image);
-                
-                if (bitmapSource.Width < width && bitmapSource.Height < height)
-                    image.Stretch = Stretch.None;
-                else
-                    image.Stretch = Stretch.Uniform;
-
-                grid.InsertBorder(i, 0);
-
-                for (int j = 1; j < vertical; j++)
+                for(int j = 0; j < vertical; j++)
                 {
-                    var label = new Label() { Content = data[i].values[j - 1], Width = width, Height = height, FontSize = fontSize };
-                    label.HorizontalContentAlignment = HorizontalAlignment.Center;
-                    Grid.SetColumn(label, i);
-                    Grid.SetRow(label, j);
-                    grid.Children.Add(label);
-                    grid.InsertBorder(i, j);
+                    var (formula, values) = data[j];
+                    //formula
+                    var parser = new TexFormulaParser();
+                    var f = parser.Parse(formula);
+                    var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
+                    var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
+
+                    var image = new Image();
+                    image.Source = bitmapSource;
+
+                    Grid.SetColumn(image, 0);
+                    Grid.SetRow(image, j);
+                    grid.Children.Add(image);
+
+                    if (bitmapSource.Width < width && bitmapSource.Height < height)
+                        image.Stretch = Stretch.None;
+                    else
+                        image.Stretch = Stretch.Uniform;
+
+                    grid.InsertBorder(0, j);
+
+                    for (int i = 1; i < horizontal; i++)
+                    {
+                        var label = new Label() { Content = data[j].values[i - 1], Width = width, Height = height, FontSize = fontSize };
+                        label.HorizontalContentAlignment = HorizontalAlignment.Center;
+                        Grid.SetColumn(label, i);
+                        Grid.SetRow(label, j);
+                        grid.Children.Add(label);
+                        grid.InsertBorder(i, j);
+                    }
                 }
             }
+            else
+            {
+                for (int i = 0; i < horizontal; i++)
+                {
+                    var (formula, values) = data[i];
+                    //formula
+                    var parser = new TexFormulaParser();
+                    var f = parser.Parse(formula);
+                    var renderer = f.GetRenderer(TexStyle.Display, 12.0, "Arial");
+                    var bitmapSource = renderer.RenderToBitmap(0.0, 0.0);
+
+                    var image = new Image();
+                    image.Source = bitmapSource;
+
+                    Grid.SetColumn(image, i);
+                    Grid.SetRow(image, 0);
+                    grid.Children.Add(image);
+
+                    if (bitmapSource.Width < width && bitmapSource.Height < height)
+                        image.Stretch = Stretch.None;
+                    else
+                        image.Stretch = Stretch.Uniform;
+
+                    grid.InsertBorder(i, 0);
+
+                    for (int j = 1; j < vertical; j++)
+                    {
+                        var label = new Label() { Content = data[i].values[j - 1], Width = width, Height = height, FontSize = fontSize };
+                        label.HorizontalContentAlignment = HorizontalAlignment.Center;
+                        Grid.SetColumn(label, i);
+                        Grid.SetRow(label, j);
+                        grid.Children.Add(label);
+                        grid.InsertBorder(i, j);
+                    }
+                }
+            }
+
             grid.UpdateLayout();
         }
 

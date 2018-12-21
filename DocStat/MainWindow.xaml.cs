@@ -252,6 +252,32 @@ namespace DocStat
             var Ni_N_Pi_pow2List = Formuls.CalcNi_N_Pi_pow2List();
             var Ni_N_Pi_pow2_devide_N_PiList = Formuls.CalcNi_N_Pi_pow2_devide_N_PiList();
             var Rozrah = Formuls.CalcRozrah();
+
+            #region Grid
+
+            #region Formulas
+
+            var first = @"";
+            var second = @"n_{i}";
+            var third = @"p_{i}";
+            var fourth = @"n*p_{i}";
+            var fifth = @"(n_{i}-n*p_{i})";
+            var sixth = @"(n_{i}-n*p_{i})^2";
+            var seventh = @"\frac{(n_{i}-n*p_{i})^2}{n*p_{i}}";
+
+            #endregion
+
+            var fifthTableData = new List<(string, List<string>)>();
+
+            fifthTableData.Add((third, PisList.ToStringList()));
+            fifthTableData.Add((fourth, N_PiList.ToStringList()));
+            fifthTableData.Add((fifth, Ni_N_PiList.ToStringList()));
+            fifthTableData.Add((sixth, Ni_N_Pi_pow2List.ToStringList()));
+            fifthTableData.Add((seventh, Ni_N_Pi_pow2_devide_N_PiList.ToStringList()));
+
+            FifthTableGrid.SetData(fifthTableData, true);
+
+            #endregion
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
