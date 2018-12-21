@@ -8,6 +8,7 @@ namespace DocStat
     public class FormulsRepository
     {
         private const int S = 3;
+        //таблиця критеріїв Пірсона
         private readonly double[] PEARSON_CRITERIONS =
         {   3.8, 6.0, 7.8, 9.5, 11.1, 12.6, 14.1, 15.5, 16.9, 18.3, 19.7,
             21.0, 22.4, 23.7, 25.0, 26.3, 27.6, 28.9, 30.1, 31.4, 32.7,
@@ -37,35 +38,38 @@ namespace DocStat
             mList = new List<double>();
         }
 
-        public double minX { get; private set; } // min of frequencies 
-        public double maxX { get; private set; } // max of frequencies
-        public double h { get; private set; } // step
-        public double n { get; private set; } // count of frequencies
-        public double X1 { get; private set; } // first X1
-        public List<double> Xi { get; private set; } // X1,X2,X3.... Xh where h - step
-        public List<double> AXi { get; private set; } // Average value of (Xi + (Xi+1))/2 for every range
-        public List<int> Ni { get; private set; }// values count in every range
-        public List<double> W { get; private set; }
-        public List<double> W_h { get; private set; }
+        public double minX { get; private set; } // мінімальна частота 
+        public double maxX { get; private set; } // максимальна частота
+        public double h { get; private set; } // крок
+        public double n { get; private set; } // кількість частот
+        public double X1 { get; private set; } // перше значення межі
+        public List<double> Xi { get; private set; } // список меж
+        public List<double> AXi { get; private set; } // середнє значення меж
+        public List<int> Ni { get; private set; } // кількість значень в кожній з меж
+        public List<double> W { get; private set; } // відносна частота
+        public List<double> W_h { get; private set; } // щільність відносних частот
 
-        public double ExceptedValue { get; private set; }
-        public double Disperssion { get; private set; }
-        public double sigma { get; private set; }
-        public List<double> FrequencyF { get; private set; }
-        public List<double> ListLaplass { get; private set; }
-        public List<double> ListAxiF { get; private set; }
+        public double ExceptedValue { get; private set; } // математичне сподівання
+        public double Disperssion { get; private set; } // дисперсія
+        public double sigma { get; private set; } // сигма
+        public List<double> FrequencyF { get; private set; } // значення функції щільності
+        public List<double> ListLaplass { get; private set; } // значення функції Лапласа
+        public List<double> ListAxiF { get; private set; } // значення функції критерію згоди Пірсона
+        public Dictionary<double, double> LaplassTable { get; private set; } // значення з таблиці Лапласа
 
+        // проміжні результати розрахункової  таблиці
         public List<double> ListPi { get; private set; }
-        public Dictionary<double, double> LaplassTable { get; private set; }
         public List<double> N_piList { get; private set; }
         public List<double> Ni_N_PiList { get; private set; }
         public List<double> Ni_N_Pi_pow2List { get; private set; }
         public List<double> Ni_N_Pi_pow2_devide_N_PiList { get; private set; }
-        public double Rozrah { get; private set; }
-        public List<double> RightRangeNi { get; private set; }
-        public List<double> mList { get; private set; }
-        public double Xit { get; set; }
-        public int R { get; set; }
+
+        public double Rozrah { get; private set; } // розрахункове значення
+        public List<double> RightRangeNi { get; private set; } // відкоректовані межі
+        public List<double> mList { get; private set; } // допоміжний список для модифікованих значень
+        public double Xit { get; set; } // ксі квадрат табличне
+        public int R { get; set; } // степені свободи
+
         public void initValues(List<double> values)
         {
             try
@@ -296,9 +300,9 @@ namespace DocStat
                 var zeroAndfirstSum = Ni[0] + Ni[1];
                 var prelastAndlastSum = Ni[Ni.Count - 2] + Ni.Last();
 
-                //Remove bounds that not include in right range and
+                //Видалення меж що не входять в модифікований діапазон
                 RightRangeNi.RemoveRange(0, 2);
-                //Insert missed value from new right range
+                //Вставка пропущених значень знового діапазону
                 RightRangeNi.Insert(0, zeroAndfirstSum);
 
                 RightRangeNi.RemoveRange(Ni.Count - 3, 2);
@@ -358,7 +362,6 @@ namespace DocStat
             return Rozrah;
         }
 
-        //calculate stages of reedom
         public int CalcR()
         {
             var k = mList.Count - 1;

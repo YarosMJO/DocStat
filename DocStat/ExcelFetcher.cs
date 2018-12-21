@@ -24,7 +24,7 @@ namespace DocStat
             Range secondCol = ws.UsedRange.Columns[2];
             Array values = secondCol.Value2 as Array;
 
-            //release excel process
+            //звільнити процес Excel
             wb.Close(true);
             xlsApp.Quit();
 

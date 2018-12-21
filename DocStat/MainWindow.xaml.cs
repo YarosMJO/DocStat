@@ -99,7 +99,7 @@ namespace DocStat
             double textLetterCount = 0.0;
             foreach (char item in text)
             {
-                if (char.IsLetter(item))
+                if (char.IsLetter(item)||char.IsDigit(item))
                 {
                     textLetterCount++;
                 }
